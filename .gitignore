@@ -1,0 +1,11 @@
+data/
+output/
+catboost_info/
+__pycache__/
+*.parquet
+*.csv
+*.log
+.venv/
+.DS_Store
+*.zip
+log_*.txt

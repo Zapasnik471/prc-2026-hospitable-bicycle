@@ -1,0 +1,7 @@
+# versions used for all runs (Google Colab, Python 3.13, A100)
+polars==1.44.1
+catboost==1.2.10
+lightgbm==4.6.0
+numpy==2.1.3
+pandas==2.2.3
+pyarrow==23.0.1
