@@ -15,10 +15,37 @@ From then on the holdout was **never filtered**; that with-tail validation track
 
 ## 2. Leaderboard history
 
+### Phase 1: schedule-anchored model on a filtered holdout (before v1–v2)
+
+Starting point: CatBoost, 500 iterations, on nine schedule-level columns only (airport, runway, stand,
+hour, month, weekday, aircraft type, wake category, market segment), validated on January 2025:
+RMSE 328.3. Feature importance: ~64 % location (airport, runway, stand), ~22 % time of day.
+
+Features were then added one block at a time: out-of-fold target encodings, METAR weather, planned
+congestion, flight-plan revisions, route geometry and arrival taxi-in. In this phase ~3,200 'artifact'
+rows (2,084,678 → 2,081,481) were removed from training **and** validation, which is why these numbers
+are far below the leaderboard (section 1). Last steps of the phase (Jan + Jul 2025 holdout, CatBoost
+500 iterations on GPU; the target encoding of airport × stand × runway was by far the top feature):
+
+| Added | Holdout RMSE |
+|---|---|
+| arrivals landed but not yet on blocks (`arr_on_apron`) | 318.9 → 318.5 |
+| actual take-offs on our runway in the last hour (`real_deps_rwy_60`) | 318.5 → 318.3 |
+| stand → runway-threshold distance from OSM (`taxi_distance_m`) | 318.3 → 318.0 |
+
+Each step is within run-to-run noise on its own; they were kept because they are cheap and physically
+motivated. OSM stand coverage (share of 2025 departures whose stand matched an OSM parking position):
+EDDF 96 %, EDDM 57 %, EGLL 98 %, EHAM 69 %, LEBL 90 %, LEMD 99 %, LFPG 95 %, LIRF 99 %, LTFM 99 %, LSZH 96 %.
+Submissions v1 and v2 came from this phase. v3–v5 were diagnostic probes of the leaderboard,
+not model changes; versions missing from the table below were
+probes or did not improve the score.
+
+### Leaderboard
+
 | Version | LB RMSE | Change |
 |---|---|---|
-| v1 | 599.65 | CatBoost on schedule-anchored features, artifacts filtered |
-| v2 | 588.56 | tuned CatBoost (depth 10, lr 0.05, l2 3) |
+| v1 | 599.65 | phase-1 CatBoost (schedule-anchored features), artifacts filtered |
+| v2 | 588.56 | phase-1 CatBoost, more features / tuning |
 | v8 | 324.34 | **AOBT block** (MVT − AOBT_3, MVT − SCHED, ...), **hurdle model**, no filtering of training data |
 | v9 | 322.76 | LIRF rule (no AOBT and s ≥ 9 h → predict s) |
 | v11 | 319.58 | queue features anchored at the actual take-off (MVT) |
