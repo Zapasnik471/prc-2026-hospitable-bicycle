@@ -138,12 +138,12 @@ Validation of the refactored code (seed 42): ALL 334.87 / TRIM 239.94, with the 
 | Linear-tree LightGBM | LB 270.10 vs 269.84 |
 | Bulk regressor learning a residual to MVT − AOBT (`--resid`) | worse |
 | Traffic state at our own pushback (`--v10`) | no gain |
-| Explicit wake leader/follower pairs as numeric separation features beyond the base block | no gain |
 | Extra METAR de-icing features (temperature change, snow accumulation) | zero importance, removed |
 | Out-of-fold corrector model on top of the hurdle | no gain |
 | Dedicated LIRF echo classifier head | no gain over the hurdle + rules |
 | Per-airport caps on predictions | worse |
 | Calibrating the tail with a function of s | worse |
 | Mixture rule for LIRF mid-s lane | worse than the hedge |
+| Explicit echo mixture `p·s + (1 − p)·hurdle_non-echo` with a calibrated classifier P(BLOCK = SCHED ± 60 s) (idea from team outgoing-boat; code kept in `src/echo.py`, flag `--echo`) | well calibrated (p 0.19 → 0.20 observed, 0.96 → 0.97) and better before the LOBT window (332.41 vs 334.87), but worse after it (314.04 vs 309.10): the gain sits on rows the window already fixes, and the LIRF no-AOBT lane gets worse. Blends with v25 (25 / 50 %) 309.22 / 310.07 = noise |
 | OPDI ground-event data (runway exit events) | coverage and quality insufficient |
 | Own off-block detection from open ADS-B tracks (adsb.lol, pilot on 15 Jul 2025) | only −1.4 % SSE on covered rows, low coverage; not worth the pipeline |

@@ -68,7 +68,7 @@ def fit_lgb_bulk(lo_tr, lo_va, feats, seed, fixed_iters=None):
     return m
 
 
-def fit_hurdle(train, valid, feats, seed, gpu, fixed=None):
+def fit_hurdle(train, valid, feats, seed, gpu, fixed=None, lgb_iters=None, clf_metric="AUC"):
     base = dict(random_seed=seed, verbose=250)
     if gpu:
         base.update(task_type="GPU", devices="0")
@@ -79,7 +79,7 @@ def fit_hurdle(train, valid, feats, seed, gpu, fixed=None):
               f"valid {(valid[TARGET].to_numpy() > C.TAIL_T).mean():.4%}")
 
     # 1) classifier P(y > TAIL_T)
-    clf = CatBoostClassifier(loss_function="Logloss", eval_metric="AUC",
+    clf = CatBoostClassifier(loss_function="Logloss", eval_metric=clf_metric,
                              **base, **_cb_params(fixed[0] if fixed else None))
     tr_c = pool(train, feats, (train[TARGET] > C.TAIL_T).cast(pl.Int32))
     if fixed:
@@ -101,7 +101,7 @@ def fit_hurdle(train, valid, feats, seed, gpu, fixed=None):
         reg_lo.fit(pool(lo_tr, feats, y_lo),
                    eval_set=pool(lo_va, feats, pl.Series(lo_va[TARGET].to_numpy().astype(np.float64))),
                    use_best_model=True)
-    lgbm = fit_lgb_bulk(lo_tr, lo_va, feats, seed, fixed_iters=C.LGB_ITERS if fixed else None)
+    lgbm = fit_lgb_bulk(lo_tr, lo_va, feats, seed, fixed_iters=(lgb_iters or C.LGB_ITERS) if fixed else None)
     del lo_tr
     gc.collect()
 

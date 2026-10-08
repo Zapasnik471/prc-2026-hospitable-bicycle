@@ -79,3 +79,18 @@ def predict_seed(seed: int, gpu: bool) -> pl.DataFrame:
     sub = tmpl.select(ID).with_columns(out["p"].round(0).cast(pl.Int32).alias(TARGET))
     assert sub[ID].to_list() == tmpl[ID].to_list() and sub[TARGET].null_count() == 0
     return sub
+
+
+def predict_seed_echo(seed: int, gpu: bool, iters: dict) -> pl.DataFrame:
+    """Experiment (--echo): full-data refit of the echo mixture with fixed iterations."""
+    from src.echo import fit_echo, predict_echo
+    full, rk = prepare_submission(seed)
+    models = fit_echo(full, None, FEATURES, seed, gpu, fixed=iters)
+    pred = np.clip(predict_echo(models, rk, FEATURES)[0], 0, None)
+    tmpl = load_template()
+    out = (tmpl.select(ID)
+           .join(rk.select([ID]).with_columns(pl.Series("p", pred)), on=ID, how="left")
+           .with_columns(pl.col("p").fill_null(float(np.median(full[TARGET].to_numpy())))))
+    sub = tmpl.select(ID).with_columns(out["p"].round(0).cast(pl.Int32).alias(TARGET))
+    assert sub[ID].to_list() == tmpl[ID].to_list() and sub[TARGET].null_count() == 0
+    return sub

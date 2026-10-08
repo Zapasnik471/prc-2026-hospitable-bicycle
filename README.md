@@ -4,8 +4,6 @@ Prediction of the taxi-out time `TAXITIME_SEC_mvt = MVT - BLOCK` (actual take-of
 for departures at ten European airports (EDDF, EDDM, EGLL, EHAM, LEBL, LEMD, LFPG, LIRF, LTFM, LSZH).
 Metric: RMSE on Jan + Jul 2026. **Final leaderboard RMSE: 265.49** (submission v25).
 
-> Draft README — sections marked TODO are being completed before the deadline.
-
 ## Approach in one paragraph
 
 A gradient-boosted **hurdle model** (CatBoost classifier for `y > 1 h` × {bulk regressor = 0.7 CatBoost +
@@ -49,6 +47,7 @@ validate.py          10-month train / Jan+Jul 2025 holdout
 src/                 pipeline code (see table above)
 data_prep/           scripts that build the external data files
 tools/               check_equivalence.py (refactor safety net, see below)
+src/echo.py          experiment not used in the final submission (validate.py / run.py --echo), see docs/experiments.md
 legacy/              the original experiment scripts that produced v25, kept for transparency
 analysis/            probes on 2025 behind the rules: lobt_window, monster_records, record_quirks
 docs/experiments.md  full experiment log incl. dead ends
@@ -130,6 +129,13 @@ the LOBT window (team outgoing-boat, `github.com/EnioAguiar/prc-taxiout-2026`),
 turnaround and disruption meters (team kind-mango, `github.com/skylinkapi/prc-data-challenge-2026-kind-mango`),
 airport-regime features (team joyous-rainbow).
 
+## Originality
+
+All code in this repository was written by team hospitable-bicycle. Other teams' public repositories
+were read for ideas only; every idea we adopted was re-derived and verified on our own 2025 data before
+use (for the LOBT window: `analysis/lobt_window.py`), and is credited above and in the code. No
+third-party competition code was copied or adapted.
+
 ## Licence
 
-GPL-3.0, see `LICENSE`.
+GPL-3.0, see `LICENSE`. Third-party data attributions: `NOTICE`.
