@@ -1,0 +1,35 @@
+prc-2026-hospitable-bicycle
+Copyright (C) 2026 team hospitable-bicycle (PRC Data Challenge 2026)
+
+This program is free software, licensed under the GNU General Public License v3.0 (see LICENSE).
+No data files are distributed with this repository. The scripts in data_prep/ download or build
+the external data listed below; their licences apply to the data, not to this code.
+
+Competition data
+  OpenSky Network / Performance Review Commission (EUROCONTROL), PRC Data Challenge 2026.
+  Used under the challenge terms; not redistributed.
+
+METAR weather reports
+  Iowa Environmental Mesonet (IEM), Iowa State University, ASOS/METAR archive
+  https://mesonet.agron.iastate.edu/
+  Provided free of charge for any lawful purpose, as-is (IEM data terms).
+
+Airports and runways
+  OurAirports, https://ourairports.com/data/ (davidmegginson/ourairports-data)
+  Released into the Public Domain.
+
+Stand (parking position) locations
+  © OpenStreetMap contributors, retrieved via the Overpass API.
+  Available under the Open Database License (ODbL) 1.0, https://opendatacommons.org/licenses/odbl/
+  Derived files built by data_prep/build_osm_stands.py and data_prep/build_taxi_distance.py
+  are subject to the ODbL if redistributed.
+
+Aircraft wake turbulence categories
+  Own compilation (src/features/wake.py) of the publicly published ICAO Doc 8643 wake categories.
+
+Ideas from other teams' public repositories (re-implemented, no code copied)
+  LOBT window, copy-probability (echo) mixture idea: team outgoing-boat,
+    https://github.com/EnioAguiar/prc-taxiout-2026
+  Turnaround slack and disruption meters: team kind-mango,
+    https://github.com/skylinkapi/prc-data-challenge-2026-kind-mango
+  Airport-regime features: team joyous-rainbow
